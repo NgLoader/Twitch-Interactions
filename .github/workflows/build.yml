@@ -19,9 +19,9 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ secrets.CACHE_VERSION }}-${{ hashFiles('./.github/workflows/buildtools.sh') }}
+        key: ${{ runner.os }}-maven-${{ vars.CACHE_VERSION }}-${{ hashFiles('./.github/workflows/buildtools.sh') }}
         restore-keys: |
-          ${{ runner.os }}-maven-${{ secrets.CACHE_VERSION }}-
+          ${{ runner.os }}-maven-${{ vars.CACHE_VERSION }}-
     - name: Set up JDK
       uses: actions/setup-java@v3
       with:
