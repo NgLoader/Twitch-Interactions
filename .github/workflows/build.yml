@@ -10,36 +10,33 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v1
-    - uses: benjlevesque/short-sha@v1.2
-      id: short-sha
+      uses: actions/checkout@v3
       with:
-        length: 6
-
-    - name: Set up JDK
-      uses: actions/setup-java@v1
+        fetch-depth: 0
+    - name: Set BUILD_VERSION
+      run: echo "BUILD_VERSION=$(git describe --tags $(git rev-list --tags --max-count=1))-b$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
+    - name: Maven cache
+      uses: actions/cache@v3
       with:
-        java-version: 17
-        distribution: 'adopt'
- 
-    - name: BuildTools cache
-      uses: actions/cache@v2
-      with:
-        path: ~/.m2/repository/org/spigotmc
+        path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ secrets.CACHE_VERSION }}-${{ hashFiles('./.github/workflows/buildtools.sh') }}
-
-    - name: BuildTools
+        restore-keys: |
+          ${{ runner.os }}-maven-${{ secrets.CACHE_VERSION }}-
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: 17
+    - name: Run BuildTools
       run: |
-        sh ./.github/workflows/buildtools.sh
- 
+        bash ./.github/workflows/buildtools.sh
     - name: Build
       run: |
-        mvn clean package "-Dversion=$(git describe --tags `git rev-list --tags --max-count=1`)--SNAPSHOT"
-        mkdir dist
-        mv target/twitchinteractions-*.jar ./dist
+        mvn clean package --batch-mode -Dversion=$BUILD_VERSION
+        mv target/twitchinteractions-*.jar ./
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
       with:
         name: Plugin
-        path: dist/
+        path: ./twitchinteractions-*.jar
