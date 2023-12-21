@@ -1,0 +1,13 @@
+api-version: 1.20
+
+name: ${project.name}
+version: ${project.version}
+description: '${project.description}'
+
+main: de.ngloader.twitchinteractions.TIPlugin
+
+authors: [NgLoader]
+
+commands:
+  twitchinteractions:
+    aliases: [twitchi, tinteractions, ti]
