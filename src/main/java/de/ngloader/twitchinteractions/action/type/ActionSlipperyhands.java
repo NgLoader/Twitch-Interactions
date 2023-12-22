@@ -110,6 +110,6 @@ public class ActionSlipperyhands extends Action implements Runnable {
 
 	public void setRandomDropDelay(Player player) {
 		long randomTime = this.config.getDropDelayMin() + this.random.nextInt(this.config.getDropDelayRandom());
-		this.dropDelay.put(player, System.currentTimeMillis() + randomTime);
+		this.dropDelay.put(player, System.currentTimeMillis() + (randomTime * 1000));
 	}
 }

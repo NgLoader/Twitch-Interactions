@@ -44,9 +44,9 @@ public class ActionManager implements Listener, Runnable {
 	}
 
 	public void initialize() {
-		this.registerAction(ActionType.TOXICRAIN);
-		this.registerAction(ActionType.SLIPPERYHANDS);
-		this.registerAction(ActionType.RICKROLL);
+		for (ActionType actionType : ActionType.values()) {
+			this.registerAction(actionType);
+		}
 
 		this.actionTypes.keySet().forEach(this::enableAction);
 

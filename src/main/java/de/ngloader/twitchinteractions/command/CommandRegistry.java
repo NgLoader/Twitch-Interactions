@@ -19,6 +19,11 @@ import com.mojang.brigadier.tree.CommandNode;
 import de.ngloader.twitchinteractions.TIPlugin;
 import de.ngloader.twitchinteractions.command.command.ActionCommand;
 import de.ngloader.twitchinteractions.command.command.DropInvCommand;
+import de.ngloader.twitchinteractions.command.command.FakeKickCommand;
+import de.ngloader.twitchinteractions.command.command.MLGCommand;
+import de.ngloader.twitchinteractions.command.command.RandomTeleportCommand;
+import de.ngloader.twitchinteractions.command.command.ScreenCreditsCommand;
+import de.ngloader.twitchinteractions.command.command.ScreenDemoCommand;
 import de.ngloader.twitchinteractions.util.PlayerUtil;
 import net.minecraft.network.Connection;
 
@@ -45,6 +50,11 @@ public class CommandRegistry implements Listener {
 	public void registerCommands(PluginCommand pluginCommand) {
 		this.register(new ActionCommand(this.plugin).create());
 		this.register(new DropInvCommand(this.plugin).create());
+		this.register(new FakeKickCommand(this.plugin).create());
+		this.register(new ScreenDemoCommand(this.plugin).create());
+		this.register(new ScreenCreditsCommand(this.plugin).create());
+		this.register(new RandomTeleportCommand(this.plugin).create());
+		this.register(new MLGCommand(this.plugin).create());
 
 		CommandBukkit bukkitCommand = new CommandBukkit(this.rootDispatcher, this.plugin.getTranslation());
 		pluginCommand.setExecutor(bukkitCommand);

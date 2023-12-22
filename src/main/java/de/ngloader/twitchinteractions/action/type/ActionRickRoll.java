@@ -69,14 +69,6 @@ public class ActionRickRoll extends Action implements Runnable {
 	}
 
 	@Override
-	protected void onPlayerEnter(Player player) {
-	}
-
-	@Override
-	protected void onPlayerLeave(Player player) {
-	}
-
-	@Override
 	public void run() {
 		if (this.rickRollText != null && this.procedure % 20 == 0) {
 			TextComponent text = this.rickRollText[this.currentLine];

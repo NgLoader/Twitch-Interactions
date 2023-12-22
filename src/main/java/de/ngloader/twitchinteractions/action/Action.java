@@ -1,10 +1,10 @@
 package de.ngloader.twitchinteractions.action;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.WeakHashMap;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -15,8 +15,8 @@ public abstract class Action implements Listener {
 
 	private final TIPlugin plugin;
 
-	private final Set<Player> activePlayers = Collections.newSetFromMap(new WeakHashMap<>());
-	private final Map<Player, Long> activePlayersExpire = new WeakHashMap<>();
+	private final Set<Player> activePlayers = Collections.newSetFromMap(new HashMap<>());
+	private final Map<Player, Long> activePlayersExpire = new HashMap<>();
 
 	private boolean enabled = false;
 
@@ -24,11 +24,11 @@ public abstract class Action implements Listener {
 		this.plugin = plugin;
 	}
 
-	protected abstract void onEnable();
-	protected abstract void onDisable();
+	protected void onEnable() {};
+	protected void onDisable() {};
 
-	protected abstract void onPlayerEnter(Player player);
-	protected abstract void onPlayerLeave(Player player);
+	protected void onPlayerEnter(Player player) {};
+	protected void onPlayerLeave(Player player) {};
 
 	public void checkExpiredPlayers() {
 		long currentTimeMillis = System.currentTimeMillis();
@@ -63,25 +63,23 @@ public abstract class Action implements Listener {
 		}
 	}
 
-	public void addPlayer(Player... players) {
-		if (!this.isEnabled()) {
-			return;
-		}
-
-		for (Player player : players) {
-			this.activePlayers.add(player);
-			this.onPlayerEnter(player);
-		}
-	}
-
 	public void addPlayer(long expireTime, Player... players) {
 		if (!this.isEnabled()) {
 			return;
 		}
 
+		long currentTimeInMillis = System.currentTimeMillis();
 		for (Player player : players) {
 			this.activePlayers.add(player);
-			this.activePlayersExpire.put(player, expireTime);
+
+			if (expireTime > 0) {
+				long currentExpire = this.activePlayersExpire.getOrDefault(player, currentTimeInMillis);
+				currentExpire += expireTime;
+				this.activePlayersExpire.put(player, currentExpire);
+			} else {
+				this.activePlayersExpire.remove(player);
+			}
+
 			this.onPlayerEnter(player);
 		}
 	}

@@ -38,11 +38,16 @@ public class ActionCommand {
 	 * action <type> add infinity <player>
 	 * action <type> add <time> <player>
 	 * action <type> remove <player>
+	 * action remove <player>
 	 */
 
 	public LiteralArgumentBuilder<CommandSender> create() {
 		return literal("action")
-				.requires(TIPermission.COMMAND_TOXIC_RAIN::hasPermission)
+				.requires(TIPermission.COMMAND_ACTION::hasPermission)
+				.then(literal("remove")
+						.executes(this::handleRemoveAll)
+						.then(argument("players", ArgumentTypes.players())
+								.executes(this::handleRemoveAllPlayers)))
 				.then(argument("actionType", ArgumentTypes.enumType(ActionType.class))
 						.then(literal("enable")
 								.executes(this::handleEnable))
@@ -62,6 +67,16 @@ public class ActionCommand {
 								.then(argument("players", ArgumentTypes.players())
 										.executes(this::handleRemovePlayers))
 								.executes(this::handleRemove)));
+	}
+
+	public int handleRemoveAll(CommandContext<CommandSender> context) {
+		this.removePlayersFromAllAction(context, Lists.newArrayList(Bukkit.getOnlinePlayers()));
+		return ArgumentBuilder.RESULT_OK;
+	}
+
+	public int handleRemoveAllPlayers(CommandContext<CommandSender> context) throws CommandSyntaxException {
+		this.removePlayersFromAllAction(context, ArgumentTypes.getPlayers(context, "players"));
+		return ArgumentBuilder.RESULT_OK;
 	}
 
 	public int handleEnable(CommandContext<CommandSender> context) {
@@ -93,26 +108,24 @@ public class ActionCommand {
 	}
 
 	public int handleAddInfinity(CommandContext<CommandSender> context) {
-		this.addActionPlayers(context, -1, Lists.newArrayList(Bukkit.getOnlinePlayers()));
+		this.addActionPlayers(context, 0, Lists.newArrayList(Bukkit.getOnlinePlayers()));
 		return ArgumentBuilder.RESULT_OK;
 	}
 
 	public int handleAddInfinityPlayers(CommandContext<CommandSender> context) throws CommandSyntaxException {
-		this.addActionPlayers(context, -1, ArgumentTypes.getPlayers(context, "players"));
+		this.addActionPlayers(context, 0, ArgumentTypes.getPlayers(context, "players"));
 		return ArgumentBuilder.RESULT_OK;
 	}
 
 	public int handleAddTime(CommandContext<CommandSender> context) {
 		long timeOffsetInSeconds = ArgumentTypes.getTime(context, "time") / 20;
-		long timeExpire = System.currentTimeMillis() + (timeOffsetInSeconds * 1000);
-		this.addActionPlayers(context, timeExpire, Lists.newArrayList(Bukkit.getOnlinePlayers()));
+		this.addActionPlayers(context, timeOffsetInSeconds * 1000, Lists.newArrayList(Bukkit.getOnlinePlayers()));
 		return ArgumentBuilder.RESULT_OK;
 	}
 
 	public int handleAddTimePlayers(CommandContext<CommandSender> context) throws CommandSyntaxException {
 		long timeOffsetInSeconds = ArgumentTypes.getTime(context, "time") / 20;
-		long timeExpire = System.currentTimeMillis() + (timeOffsetInSeconds * 1000);
-		this.addActionPlayers(context, timeExpire, ArgumentTypes.getPlayers(context, "players"));
+		this.addActionPlayers(context, timeOffsetInSeconds * 1000, ArgumentTypes.getPlayers(context, "players"));
 		return ArgumentBuilder.RESULT_OK;
 	}
 
@@ -135,15 +148,7 @@ public class ActionCommand {
 
 		int count = 0;
 		for (Player player : players) {
-			if (action.containsPlayer(player)) {
-				continue;
-			}
-
-			if (time == -1) {
-				action.addPlayer(player);
-			} else {
-				action.addPlayer(time, player);
-			}
+			action.addPlayer(time, player);
 			count++;
 		}
 
@@ -168,6 +173,19 @@ public class ActionCommand {
 		}
 
 		this.translation.send(context, Message.ACTION_REMOVED_PLAYERS, actionType.name(), count);
+	}
+
+	public void removePlayersFromAllAction(CommandContext<CommandSender> context, List<Player> players) {
+		for (ActionType actionType : ActionType.values()) {
+			Action action = this.actionManager.getAction(actionType);
+			if (action == null) {
+				continue;
+			}
+
+			players.forEach(action::removePlayer);
+		}
+
+		this.translation.send(context, Message.ACTION_ALL_REMOVED_PLAYERS, players.size());
 	}
 
 	public Action getAction(CommandContext<CommandSender> context, ActionType actionType) {

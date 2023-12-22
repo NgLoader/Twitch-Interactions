@@ -19,6 +19,12 @@ public class TIConfig {
 	@SimpleComment("Action setting for slippery hands")
 	private SlipperyHandsConfig slipperyHands;
 
+	@SimpleKey
+	private FakeKickConfig fakeKick;
+
+	@SimpleKey
+	private RandomTeleportConfig randomTeleport;
+
 	public boolean isVerbose() {
 		return this.verbose;
 	}
@@ -29,5 +35,13 @@ public class TIConfig {
 
 	public SlipperyHandsConfig getSlipperyHandsConfig() {
 		return this.slipperyHands;
+	}
+
+	public FakeKickConfig getFakeKickConfig() {
+		return this.fakeKick;
+	}
+
+	public RandomTeleportConfig getRandomTeleportConfig() {
+		return this.randomTeleport;
 	}
 }

@@ -45,8 +45,8 @@ public class ActionToxicRain extends Action implements Runnable {
 
 	@Override
 	protected void onPlayerLeave(Player player) {
-		player.resetPlayerWeather();
 		player.removePotionEffect(PotionEffectType.POISON);
+		player.resetPlayerWeather();
 	}
 
 	@Override
