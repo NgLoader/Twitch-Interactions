@@ -5,13 +5,15 @@
 
 	<groupId>de.ngloader</groupId>
 	<artifactId>twitchinteractions</artifactId>
-	<version>0.0.1</version>
+	<version>${revision}</version>
 
 	<name>TwitchInteractions</name>
 	<description>I can do some stuff</description>
 	<inceptionYear>2023</inceptionYear>
 
 	<properties>
+		<revision>0.0.1</revision>
+		
 		<dependency.bukkit.version>1.20.2-R0.1-SNAPSHOT</dependency.bukkit.version>
 
 		<plugin.compile.version>3.10.1</plugin.compile.version>
