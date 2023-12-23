@@ -11,12 +11,12 @@ import de.ngloader.twitchinteractions.config.v3.require.SimpleInteger;
 public class IntegerTranslator implements SimpleTranslator<Integer, SimpleInteger> {
 
 	@Override
-	public void serialize(ConfigurationSection config, SimpleTranslatorKey key, Integer value) {
+	public void serialize(ConfigurationSection config, SimpleTranslatorKey key, Integer value, SimpleInteger requirement) {
 		config.set(key.name(), value);
 	}
 
 	@Override
-	public Integer deserialize(ConfigurationSection config, SimpleTranslatorKey key, Integer defaultValue) {
+	public Integer deserialize(ConfigurationSection config, SimpleTranslatorKey key, Integer defaultValue, SimpleInteger requirement) {
 		return config.getInt(key.name(), defaultValue);
 	}
 

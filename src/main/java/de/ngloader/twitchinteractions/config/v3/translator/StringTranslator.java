@@ -12,12 +12,12 @@ import de.ngloader.twitchinteractions.config.v3.require.SimpleString;
 public class StringTranslator implements SimpleTranslator<String, SimpleString> {
 
 	@Override
-	public void serialize(ConfigurationSection config, SimpleTranslatorKey key, String value) {
+	public void serialize(ConfigurationSection config, SimpleTranslatorKey key, String value, SimpleString requirement) {
 		config.set(key.name(), value);
 	}
 
 	@Override
-	public String deserialize(ConfigurationSection config, SimpleTranslatorKey key, String defaultValue) {
+	public String deserialize(ConfigurationSection config, SimpleTranslatorKey key, String defaultValue, SimpleString requirement) {
 		return config.getString(key.name(), defaultValue);
 	}
 

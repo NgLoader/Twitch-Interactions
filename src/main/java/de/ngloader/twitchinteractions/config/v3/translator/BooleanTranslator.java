@@ -11,12 +11,12 @@ import de.ngloader.twitchinteractions.config.v3.SimpleTranslatorKey;
 public class BooleanTranslator implements SimpleTranslator<Boolean, Annotation> {
 
 	@Override
-	public void serialize(ConfigurationSection config, SimpleTranslatorKey key, Boolean value) {
+	public void serialize(ConfigurationSection config, SimpleTranslatorKey key, Boolean value, Annotation requirement) {
 		config.set(key.name(), value);
 	}
 
 	@Override
-	public Boolean deserialize(ConfigurationSection config, SimpleTranslatorKey key, Boolean defaultValue) {
+	public Boolean deserialize(ConfigurationSection config, SimpleTranslatorKey key, Boolean defaultValue, Annotation requirement) {
 		return config.getBoolean(key.name(), defaultValue);
 	}
 

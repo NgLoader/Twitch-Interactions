@@ -43,7 +43,7 @@ public class KickCommand implements TICommand {
 						.then(argument("players", ArgumentTypes.players())
 								.executes(this::handleClosed)))
 				.then(literal("ban")
-						.requires(TIPermission.COMMAND_FAKE_BAN::hasPermission)
+						.requires(TIPermission.COMMAND_KICK::hasPermission)
 						.then(argument("players", ArgumentTypes.players())
 								.executes(this::handleBan)));
 	}

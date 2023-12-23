@@ -11,12 +11,12 @@ import de.ngloader.twitchinteractions.config.v3.require.SimpleDouble;
 public class DoubleTranslator implements SimpleTranslator<Double, SimpleDouble> {
 
 	@Override
-	public void serialize(ConfigurationSection config, SimpleTranslatorKey key, Double value) {
+	public void serialize(ConfigurationSection config, SimpleTranslatorKey key, Double value, SimpleDouble requirement) {
 		config.set(key.name(), value);
 	}
 
 	@Override
-	public Double deserialize(ConfigurationSection config, SimpleTranslatorKey key, Double defaultValue) {
+	public Double deserialize(ConfigurationSection config, SimpleTranslatorKey key, Double defaultValue, SimpleDouble requirement) {
 		return config.getDouble(key.name(), defaultValue);
 	}
 

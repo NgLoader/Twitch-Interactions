@@ -16,7 +16,9 @@ public enum Message {
 	COMMAND_KICK("commandKick", "Kicked §e{0} %gplayers for reaseon §e{1}§8."),
 	COMMAND_DEMO("commandDemo", "Send demo screen to §e{0} §gplayers§8."),
 	COMMAND_RANDOM_TELEPORT("commandRandomTeleport", "Teleported §e{0} §gplayers§8."),
-	COMMAND_MLG("commandMLG", "§e{0} §gplayers trying now a MLG§8.");
+	COMMAND_MLG("commandMLG", "§e{0} §gplayers trying now a MLG§8."),
+	COMMAND_KILLNEARBYENTITIES("commandKillNearbyEntities", "Killed §e{1} §gnearby entities from §e{0} §gplayers§8."),
+	COMMAND_RANDOM_POTION("commandRandomPotion", "§e{0} §gplayers received a random potion effect§8.");
 
 	public static Message findByKey(String key) {
 		for (Message messageKey : values()) {

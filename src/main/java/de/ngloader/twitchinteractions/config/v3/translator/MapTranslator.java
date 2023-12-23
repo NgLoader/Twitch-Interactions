@@ -14,12 +14,12 @@ import de.ngloader.twitchinteractions.config.v3.SimpleTranslatorKey;
 public class MapTranslator implements SimpleTranslator<Map, Annotation> {
 
 	@Override
-	public void serialize(ConfigurationSection config, SimpleTranslatorKey key, Map value) {
+	public void serialize(ConfigurationSection config, SimpleTranslatorKey key, Map value, Annotation requirement) {
 		config.set(key.name(), value);
 	}
 
 	@Override
-	public Map<?, ?> deserialize(ConfigurationSection config, SimpleTranslatorKey key, Map defaultValue) {
+	public Map<?, ?> deserialize(ConfigurationSection config, SimpleTranslatorKey key, Map defaultValue, Annotation requirement) {
 		ConfigurationSection section = config.getConfigurationSection(key.name());
 		return section != null ? section.getValues(true) : defaultValue;
 	}

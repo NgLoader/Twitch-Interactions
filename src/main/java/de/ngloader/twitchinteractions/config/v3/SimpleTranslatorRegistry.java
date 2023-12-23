@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 
 import de.ngloader.twitchinteractions.config.v3.translator.BooleanTranslator;
 import de.ngloader.twitchinteractions.config.v3.translator.DoubleTranslator;
+import de.ngloader.twitchinteractions.config.v3.translator.EnumTranslator;
 import de.ngloader.twitchinteractions.config.v3.translator.IntegerTranslator;
 import de.ngloader.twitchinteractions.config.v3.translator.ListTranslator;
 import de.ngloader.twitchinteractions.config.v3.translator.MapTranslator;
@@ -25,6 +26,7 @@ public class SimpleTranslatorRegistry {
 		registerTranslator(new ListTranslator());
 		registerTranslator(new MapTranslator());
 		registerTranslator(new StringTranslator());
+		registerTranslator(new EnumTranslator());
 	}
 
 	public static void registerTranslator(SimpleTranslator<?, ?> converter) {
@@ -33,9 +35,12 @@ public class SimpleTranslatorRegistry {
 		}
 	}
 
-	@SuppressWarnings("unchecked") // TODO find a better way then using unchecked
 	public static <V, R extends Annotation> SimpleTranslator<V, R> getTranslator(SimpleField<?> field) {
-		Class<?> fieldClass = field.getType();
+		return getTranslator(field.getType());
+	}
+
+	@SuppressWarnings("unchecked") // TODO find a better way then using unchecked
+	public static <V, R extends Annotation> SimpleTranslator<V, R> getTranslator(Class<?> fieldClass) {
 		SimpleTranslator<?, ?> converter = TRANSLATOR_LIST.get(fieldClass);
 		if (converter == null) {
 			for (Entry<Class<?>, SimpleTranslator<?, ?>> entry : TRANSLATOR_LIST.entrySet()) {

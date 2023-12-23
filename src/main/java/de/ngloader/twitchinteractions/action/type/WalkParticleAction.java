@@ -13,33 +13,22 @@ import de.ngloader.twitchinteractions.TIPlugin;
 import de.ngloader.twitchinteractions.action.Action;
 import de.ngloader.twitchinteractions.config.RandomParticleWalkConfig;
 
-public class RandomParticleWalkAction extends Action {
+public class WalkParticleAction extends Action {
 
 	private final RandomParticleWalkConfig config;
 
 	private final Random random = new Random();
-	private final List<Particle> particleList = List.of(
-			Particle.HEART,
-			Particle.ASH,
-			Particle.CLOUD,
-			Particle.VILLAGER_HAPPY,
-			Particle.VILLAGER_ANGRY,
-			Particle.EXPLOSION_NORMAL,
-			Particle.CHERRY_LEAVES,
-			Particle.CRIT,
-			Particle.CRIT_MAGIC,
-			Particle.DRAGON_BREATH,
-			Particle.SPELL_WITCH,
-			Particle.SNOWFLAKE,
-			Particle.NOTE,
-			Particle.PORTAL,
-			Particle.ELECTRIC_SPARK,
-			Particle.DRIP_LAVA,
-			Particle.DRIP_WATER);
+	private final List<Particle> particleList;
 
-	public RandomParticleWalkAction(TIPlugin plugin) {
-		super(plugin, "RandomParticleWalk", "twitchinteractions.command.action.randomparticlewalk");
+	public WalkParticleAction(TIPlugin plugin) {
+		super(plugin, "WalkParticle", "twitchinteractions.command.action.walkparticle");
 		this.config = plugin.getTIConfig().getRandomParticleWalkConfig();
+		this.particleList = this.config.getParticleEffects();
+	}
+
+	@Override
+	protected boolean canInitialize() {
+		return !particleList.isEmpty();
 	}
 
 	@EventHandler

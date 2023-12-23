@@ -21,7 +21,9 @@ import de.ngloader.twitchinteractions.TIPlugin;
 import de.ngloader.twitchinteractions.command.command.ActionCommand;
 import de.ngloader.twitchinteractions.command.command.DropInvCommand;
 import de.ngloader.twitchinteractions.command.command.KickCommand;
+import de.ngloader.twitchinteractions.command.command.KillNearbyEntitiesCommand;
 import de.ngloader.twitchinteractions.command.command.MLGCommand;
+import de.ngloader.twitchinteractions.command.command.RandomPotionCommand;
 import de.ngloader.twitchinteractions.command.command.RandomTeleportCommand;
 import de.ngloader.twitchinteractions.command.command.ScreenCreditsCommand;
 import de.ngloader.twitchinteractions.command.command.ScreenDemoCommand;
@@ -59,6 +61,8 @@ public class CommandRegistry implements Listener {
 		this.register(new ScreenCreditsCommand(this.plugin));
 		this.register(new RandomTeleportCommand(this.plugin));
 		this.register(new MLGCommand(this.plugin));
+		this.register(new KillNearbyEntitiesCommand(this.plugin));
+		this.register(new RandomPotionCommand(this.plugin));
 	}
 
 	public void setPluginCommand(PluginCommand pluginCommand) {

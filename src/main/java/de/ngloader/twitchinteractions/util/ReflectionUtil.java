@@ -1,6 +1,5 @@
 package de.ngloader.twitchinteractions.util;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -171,14 +170,5 @@ public class ReflectionUtil {
 				clazz.getSimpleName(),
 				target.getSimpleName(),
 				index));
-	}
-
-	public static Constructor<?> getConstructor(Class<?> clazz, Class<?>... parameterTypes) {
-		try {
-			return clazz.getDeclaredConstructor(parameterTypes);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
 	}
 }

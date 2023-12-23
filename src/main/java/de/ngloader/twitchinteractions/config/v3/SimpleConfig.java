@@ -159,7 +159,7 @@ public class SimpleConfig<Config> {
 			Type initialValue = (Type) field.getField(instance);
 			Type defaultValue = (Type) translator.defaultValue(translatorKey, initialValue, requireAnnotation);
 
-			translator.serialize(config, translatorKey, defaultValue);
+			translator.serialize(config, translatorKey, defaultValue, requireAnnotation);
 			this.setComments(config, field, translatorKey.name());
 		}
 	}
@@ -228,7 +228,7 @@ public class SimpleConfig<Config> {
 
 			Type initialValue = (Type) field.getField(instance);
 			Type defaultValue = translator.defaultValue(translatorKey, initialValue, requireAnnotation);
-			Type value = translator.deserialize(config, translatorKey, defaultValue);
+			Type value = translator.deserialize(config, translatorKey, defaultValue, requireAnnotation);
 
 			if (value != null) {
 				if (requireAnnotation != null) {

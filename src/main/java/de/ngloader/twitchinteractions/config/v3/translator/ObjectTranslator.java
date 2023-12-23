@@ -11,12 +11,12 @@ import de.ngloader.twitchinteractions.config.v3.SimpleTranslatorKey;
 public class ObjectTranslator implements SimpleTranslator<Object, Annotation> {
 
 	@Override
-	public void serialize(ConfigurationSection config, SimpleTranslatorKey key, Object value) {
+	public void serialize(ConfigurationSection config, SimpleTranslatorKey key, Object value, Annotation requirement) {
 		config.set(key.name(), value);
 	}
 
 	@Override
-	public Object deserialize(ConfigurationSection config, SimpleTranslatorKey key, Object defaultValue) {
+	public Object deserialize(ConfigurationSection config, SimpleTranslatorKey key, Object defaultValue, Annotation requirement) {
 		return config.get(key.name(), defaultValue);
 	}
 

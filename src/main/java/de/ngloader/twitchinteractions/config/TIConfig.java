@@ -31,6 +31,15 @@ public class TIConfig {
 	@SimpleKey
 	private RandomParticleWalkConfig randomParticleWalk;
 
+	@SimpleKey
+	private KillNearbyEntitiesConfig killNearbyEntities;
+
+	@SimpleKey
+	private RingOfFireConfig ringOfFire;
+
+	@SimpleKey
+	private RandomPotionConfig randomPotion;
+
 	public boolean isVerbose() {
 		return this.verbose;
 	}
@@ -57,5 +66,17 @@ public class TIConfig {
 
 	public RandomParticleWalkConfig getRandomParticleWalkConfig() {
 		return this.randomParticleWalk;
+	}
+
+	public KillNearbyEntitiesConfig getKillNearbyEntitiesConfig() {
+		return this.killNearbyEntities;
+	}
+
+	public RingOfFireConfig getRingOfFireConfig() {
+		return this.ringOfFire;
+	}
+
+	public RandomPotionConfig getRandomPotion() {
+		return this.randomPotion;
 	}
 }
