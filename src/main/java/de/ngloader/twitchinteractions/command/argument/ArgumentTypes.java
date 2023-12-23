@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.bukkit.Bukkit;
@@ -782,6 +783,18 @@ public class ArgumentTypes {
 	 */
 	public static <T extends Enum<?>> EnumArgumentType<T> enumType(Class<T> enumClass) {
 		return EnumArgumentType.enumType(enumClass);
+	}
+
+	/**
+	 * public enum Test {
+	 * 	FOO,
+	 *  BAR;
+	 * }
+	 * 
+	 * Examples: "FOO", "BAR"
+	 */
+	public static <T extends Enum<?>> EnumArgumentType<T> enumType(Class<T> enumClass, Function<T, String> mapper) {
+		return EnumArgumentType.enumType(enumClass, mapper);
 	}
 
 	public static <T extends Enum<?>> T getEnum(CommandContext<?> context, String name) {

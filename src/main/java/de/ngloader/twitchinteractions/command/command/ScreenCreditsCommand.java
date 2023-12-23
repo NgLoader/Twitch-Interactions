@@ -16,14 +16,15 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import de.ngloader.twitchinteractions.TIPermission;
 import de.ngloader.twitchinteractions.TIPlugin;
+import de.ngloader.twitchinteractions.command.TICommand;
 import de.ngloader.twitchinteractions.command.argument.ArgumentBuilder;
 import de.ngloader.twitchinteractions.command.argument.ArgumentTypes;
 import de.ngloader.twitchinteractions.translation.Message;
 import de.ngloader.twitchinteractions.translation.Translation;
-import de.ngloader.twitchinteractions.util.PlayerUtil;
+import de.ngloader.twitchinteractions.util.CraftBukkitUtil;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
 
-public class ScreenCreditsCommand {
+public class ScreenCreditsCommand implements TICommand {
 
 	private final Translation translation;
 
@@ -33,7 +34,8 @@ public class ScreenCreditsCommand {
 		this.translation = plugin.getTranslation();
 	}
 
-	public LiteralArgumentBuilder<CommandSender> create() {
+	@Override
+	public LiteralArgumentBuilder<CommandSender> createArgumentBuilder() {
 		return literal("credits")
 				.requires(TIPermission.COMMAND_SHOW_CREDITS::hasPermission)
 				.executes(this::handle)
@@ -43,7 +45,7 @@ public class ScreenCreditsCommand {
 
 	public int handle(CommandContext<CommandSender> context) throws CommandSyntaxException {
 		List<Player> players = new ArrayList<>(Bukkit.getOnlinePlayers());
-		PlayerUtil.sendPacket(players, gameEventPacket);
+		CraftBukkitUtil.sendPacket(players, gameEventPacket);
 
 		this.translation.send(context, Message.COMMAND_DEMO, players.size());
 		return ArgumentBuilder.RESULT_OK;
@@ -51,7 +53,7 @@ public class ScreenCreditsCommand {
 
 	public int handlePlayers(CommandContext<CommandSender> context) throws CommandSyntaxException {
 		List<Player> players = ArgumentTypes.getPlayers(context, "players");
-		PlayerUtil.sendPacket(players, gameEventPacket);
+		CraftBukkitUtil.sendPacket(players, gameEventPacket);
 
 		this.translation.send(context, Message.COMMAND_DEMO, players.size());
 		return ArgumentBuilder.RESULT_OK;

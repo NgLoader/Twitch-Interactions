@@ -14,7 +14,7 @@ import org.bukkit.scheduler.BukkitTask;
 import de.ngloader.twitchinteractions.TIPlugin;
 import de.ngloader.twitchinteractions.action.Action;
 
-public class ActionAnnoyingVillagerSounds extends Action implements Runnable {
+public class AnnoyingVillagerSoundsAction extends Action implements Runnable {
 
 	private final Random random = new Random();
 
@@ -22,8 +22,8 @@ public class ActionAnnoyingVillagerSounds extends Action implements Runnable {
 
 	private List<Sound> soundList = new ArrayList<>();
 
-	public ActionAnnoyingVillagerSounds(TIPlugin plugin) {
-		super(plugin);
+	public AnnoyingVillagerSoundsAction(TIPlugin plugin) {
+		super(plugin, "AnnoyingVillagerSounds", "twitchinteractions.command.action.annoyingvillagersounds");
 
 		for (Sound sound : Sound.values()) {
 			if (sound.name().contains("VILLAGER") && !sound.name().contains("ZOMBIE_VILLAGER")) {

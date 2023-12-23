@@ -21,6 +21,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import de.ngloader.twitchinteractions.TIPermission;
 import de.ngloader.twitchinteractions.TIPlugin;
+import de.ngloader.twitchinteractions.command.TICommand;
 import de.ngloader.twitchinteractions.command.argument.ArgumentBuilder;
 import de.ngloader.twitchinteractions.command.argument.ArgumentTypes;
 import de.ngloader.twitchinteractions.config.DropInventoryConfig;
@@ -28,7 +29,7 @@ import de.ngloader.twitchinteractions.translation.Message;
 import de.ngloader.twitchinteractions.translation.Translation;
 import de.ngloader.twitchinteractions.util.BlockUtil;
 
-public class DropInvCommand {
+public class DropInvCommand implements TICommand {
 
 	private final Translation translation;
 	private final DropInventoryConfig config;
@@ -40,7 +41,8 @@ public class DropInvCommand {
 		this.config = plugin.getTIConfig().getDropInventoryConfig();
 	}
 
-	public LiteralArgumentBuilder<CommandSender> create() {
+	@Override
+	public LiteralArgumentBuilder<CommandSender> createArgumentBuilder() {
 		return literal("dropinv")
 				.requires(TIPermission.COMMAND_DROP_INVENTORY::hasPermission)
 				.then(argument("radius", ArgumentTypes.doubleArg(1, 60))

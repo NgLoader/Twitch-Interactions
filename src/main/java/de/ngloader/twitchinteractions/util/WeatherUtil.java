@@ -53,11 +53,11 @@ public class WeatherUtil {
 	}
 
 	public static void updateWeatherStrength(ClientboundGameEventPacket thunderPacket, ClientboundGameEventPacket rainPacket, Player... players) {
-		PlayerUtil.sendPacket(players, rainPacket, thunderPacket);
+		CraftBukkitUtil.sendPacket(players, rainPacket, thunderPacket);
 	}
 
 	public static void updateWeatherStrength(ClientboundGameEventPacket thunderPacket, ClientboundGameEventPacket rainPacket, List<Player> players) {
-		PlayerUtil.sendPacket(players, rainPacket, thunderPacket);
+		CraftBukkitUtil.sendPacket(players, rainPacket, thunderPacket);
 	}
 
 	private ClientboundGameEventPacket rainPacket;
@@ -100,11 +100,11 @@ public class WeatherUtil {
 	}
 
 	public void sendRainStrength(Player... players) {
-		PlayerUtil.sendPacket(players, this.rainPacket, this.thunderPacket);
+		CraftBukkitUtil.sendPacket(players, this.rainPacket, this.thunderPacket);
 	}
 
 	public void sendRainStrength(List<Player> players) {
-		PlayerUtil.sendPacket(players, this.rainPacket, this.thunderPacket);
+		CraftBukkitUtil.sendPacket(players, this.rainPacket, this.thunderPacket);
 	}
 
 	public void resetPlayer(Player... players) {

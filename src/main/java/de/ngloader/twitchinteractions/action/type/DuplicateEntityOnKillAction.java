@@ -19,12 +19,12 @@ import org.bukkit.persistence.PersistentDataType;
 import de.ngloader.twitchinteractions.TIPlugin;
 import de.ngloader.twitchinteractions.action.Action;
 
-public class ActionDuplicateEntityOnKill extends Action {
+public class DuplicateEntityOnKillAction extends Action {
 
 	private final NamespacedKey duplicateEntityKey;
 
-	public ActionDuplicateEntityOnKill(TIPlugin plugin) {
-		super(plugin);
+	public DuplicateEntityOnKillAction(TIPlugin plugin) {
+		super(plugin, "DuplicateEntityOnKill", "twitchinteractions.command.action.duplicateentityonkill");
 
 		this.duplicateEntityKey = NamespacedKey.fromString("duplicatedentity", plugin);
 	}

@@ -19,7 +19,7 @@ import de.ngloader.twitchinteractions.TIPlugin;
 import de.ngloader.twitchinteractions.action.Action;
 import de.ngloader.twitchinteractions.config.SlipperyHandsConfig;
 
-public class ActionSlipperyhands extends Action implements Runnable {
+public class SlipperyhandsAction extends Action implements Runnable {
 
 	private final Map<Player, Long> dropDelay = new WeakHashMap<>();
 	private final Map<Integer, ItemStack> dummySlotPosition = new HashMap<>();
@@ -30,8 +30,8 @@ public class ActionSlipperyhands extends Action implements Runnable {
 
 	private BukkitTask currentTask;
 
-	public ActionSlipperyhands(TIPlugin plugin) {
-		super(plugin);
+	public SlipperyhandsAction(TIPlugin plugin) {
+		super(plugin, "SlipperyHands", "twitchinteractions.command.action.slipperyhands");
 
 		this.config = plugin.getTIConfig().getSlipperyHandsConfig();
 	}
@@ -101,8 +101,10 @@ public class ActionSlipperyhands extends Action implements Runnable {
 			Location eyeLocation = player.getEyeLocation();
 			World world = eyeLocation.getWorld();
 			world.dropItem(eyeLocation.subtract(0, 0.25, 0), item, spawnItem -> {
-				spawnItem.setPickupDelay(20 * 2);
-				spawnItem.setVelocity(eyeLocation.getDirection().normalize().multiply(0.35));
+				spawnItem.setPickupDelay(20 * this.config.getPickupDelay());
+				spawnItem.setVelocity(eyeLocation.getDirection()
+						.normalize()
+						.multiply(this.config.getItemKnockbackMultiply()));
 				world.playSound(eyeLocation, Sound.ITEM_BUNDLE_DROP_CONTENTS, 1, 1);
 			});
 		}

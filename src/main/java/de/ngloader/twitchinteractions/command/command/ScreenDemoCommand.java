@@ -16,12 +16,13 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import de.ngloader.twitchinteractions.TIPermission;
 import de.ngloader.twitchinteractions.TIPlugin;
+import de.ngloader.twitchinteractions.command.TICommand;
 import de.ngloader.twitchinteractions.command.argument.ArgumentBuilder;
 import de.ngloader.twitchinteractions.command.argument.ArgumentTypes;
 import de.ngloader.twitchinteractions.translation.Message;
 import de.ngloader.twitchinteractions.translation.Translation;
 
-public class ScreenDemoCommand {
+public class ScreenDemoCommand implements TICommand {
 
 	private final Translation translation;
 
@@ -29,7 +30,8 @@ public class ScreenDemoCommand {
 		this.translation = plugin.getTranslation();
 	}
 
-	public LiteralArgumentBuilder<CommandSender> create() {
+	@Override
+	public LiteralArgumentBuilder<CommandSender> createArgumentBuilder() {
 		return literal("demo")
 				.requires(TIPermission.COMMAND_SHOW_DEMO::hasPermission)
 				.executes(this::handle)

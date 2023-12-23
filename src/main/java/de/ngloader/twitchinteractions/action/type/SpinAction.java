@@ -8,12 +8,12 @@ import org.bukkit.scheduler.BukkitTask;
 import de.ngloader.twitchinteractions.TIPlugin;
 import de.ngloader.twitchinteractions.action.Action;
 
-public class ActionSpin extends Action implements Runnable {
+public class SpinAction extends Action implements Runnable {
 
 	private BukkitTask currentTask;
 
-	public ActionSpin(TIPlugin plugin) {
-		super(plugin);
+	public SpinAction(TIPlugin plugin) {
+		super(plugin, "Spin", "twitchinteractions.command.action.spin");
 	}
 
 	@Override

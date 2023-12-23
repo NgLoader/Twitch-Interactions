@@ -20,7 +20,7 @@ import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 
-public class ActionRickRoll extends Action implements Runnable {
+public class RickRollAction extends Action implements Runnable {
 
 	private BukkitTask currentTask;
 
@@ -29,14 +29,14 @@ public class ActionRickRoll extends Action implements Runnable {
 	private TextComponent[] rickRollText;
 	private int currentLine = 0;
 
-	public ActionRickRoll(TIPlugin plugin) {
-		super(plugin);
+	public RickRollAction(TIPlugin plugin) {
+		super(plugin, "RickRoll", "twitchinteractions.command.action.rickroll");
 
 		this.readRickRollText();
 	}
 
 	public void readRickRollText() {
-		try (InputStream inputStream = ActionRickRoll.class.getResourceAsStream("/nevergonnagiveyouup.txt");
+		try (InputStream inputStream = RickRollAction.class.getResourceAsStream("/nevergonnagiveyouup.txt");
 				InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
 				BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
 			this.rickRollText = bufferedReader.lines()

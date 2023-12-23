@@ -46,7 +46,8 @@ public class TIPlugin extends JavaPlugin {
 			this.commandSuggestion = new CommandSuggestion(this);
 
 			PluginCommand pluginCommand = this.getCommand("twitchinteractions");
-			this.commandRegistry.registerCommands(pluginCommand);
+			this.commandRegistry.setPluginCommand(pluginCommand);
+			this.commandRegistry.initialize();
 		} catch (Exception e) {
 			TILogger.error("An error occured while enabling plugin", e);
 		}
@@ -54,10 +55,11 @@ public class TIPlugin extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		Bukkit.getOnlinePlayers().forEach(this.commandRegistry::uninjectPipeline);
-
 		if (this.actionManager != null) {
 			this.actionManager.shutdown();
+		}
+		if (this.commandRegistry != null) {
+			this.commandRegistry.shutdown();
 		}
 
 		Bukkit.getServer().getScheduler().cancelTasks(this);

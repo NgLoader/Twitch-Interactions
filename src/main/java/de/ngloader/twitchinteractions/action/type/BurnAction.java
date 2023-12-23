@@ -5,21 +5,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
 
 import de.ngloader.twitchinteractions.TIPlugin;
 import de.ngloader.twitchinteractions.action.Action;
 
-public class ActionStarve extends Action implements Runnable {
-
-	private static final PotionEffect POISION_POTION = new PotionEffect(PotionEffectType.HUNGER, 20 * 4, 20);
+public class BurnAction extends Action implements Runnable {
 
 	private BukkitTask currentTask;
 
-	public ActionStarve(TIPlugin plugin) {
-		super(plugin);
+	public BurnAction(TIPlugin plugin) {
+		super(plugin, "Burn", "twitchinteractions.command.action.burn");
 	}
 
 	@Override
@@ -39,18 +35,20 @@ public class ActionStarve extends Action implements Runnable {
 
 	@Override
 	protected void onPlayerEnter(Player player) {
-		player.addPotionEffect(POISION_POTION);
+		player.setFireTicks(20 * 2);
+		player.setVisualFire(true);
 	}
 
 	@Override
 	protected void onPlayerLeave(Player player) {
-		player.removePotionEffect(PotionEffectType.HUNGER);
+		player.setFireTicks(0);
+		player.setVisualFire(false);
 	}
 
 	@Override
 	public void run() {
 		for (Player player : this.getActivePlayers()) {
-			player.addPotionEffect(POISION_POTION);
+			player.setFireTicks(20 * 2);
 		}
 	}
 
@@ -64,7 +62,7 @@ public class ActionStarve extends Action implements Runnable {
 				return;
 			}
 
-			if (event.getCause() == DamageCause.STARVATION) {
+			if (event.getCause() == DamageCause.FIRE_TICK) {
 				player.setHealth(2);
 				event.setDamage(1);
 			}

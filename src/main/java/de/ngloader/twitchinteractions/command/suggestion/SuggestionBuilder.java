@@ -3,87 +3,80 @@ package de.ngloader.twitchinteractions.command.suggestion;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.bukkit.command.CommandSender;
-
+import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 
-import de.ngloader.twitchinteractions.command.argument.ArgumentBuilder;
-
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class SuggestionBuilder<TRoot, TOut> {
+public class SuggestionBuilder<TRoot, TOut, TSender> {
 
-	private final List<Function<Stream, Stream>> transformations = new ArrayList<>();
-	protected final Supplier<Stream<TRoot>> supplier;
+	private final List<BiFunction<Stream, CommandContext<TSender>, Stream>> transformations = new ArrayList<>();
+	private final Supplier<Stream<TRoot>> supplier;
 
 	public SuggestionBuilder(Supplier<Stream<TRoot>> supplier) {
 		this.supplier = supplier;
 	}
 
-	public SuggestionBuilder<TRoot, TOut> filter(Predicate<TOut> predicate) {
-		this.transformations.add(stream -> stream.filter(predicate));
+	public SuggestionBuilder<TRoot, TOut, TSender> filter(Predicate<TOut> predicate) {
+		this.transformations.add((stream, context) -> stream.filter(predicate));
 		return this;
 	}
 
-	public <TMap> SuggestionBuilder<TRoot, TMap> map(Function<TOut, TMap> function) {
-		this.transformations.add(stream -> stream.map(function));
-		return (SuggestionBuilder<TRoot, TMap>) this;
+	public SuggestionBuilder<TRoot, TOut, TSender> filter(BiPredicate<TOut, CommandContext<TSender>> predicate) {
+		this.transformations.add((stream, context) -> stream.filter(value -> predicate.test((TOut) value, context)));
+		return this;
 	}
 
-	public <TMap> SuggestionBuilder<TRoot, TMap> flatMap(Function<TOut, TMap> function) {
-		this.transformations.add(stream -> stream.flatMap(function));
-		return (SuggestionBuilder<TRoot, TMap>) this;
+	public <TMap> SuggestionBuilder<TRoot, TMap, TSender> map(Function<TOut, TMap> function) {
+		this.transformations.add((stream, context) -> stream.map(function));
+		return (SuggestionBuilder<TRoot, TMap, TSender>) this;
 	}
 
-	public Function<Stream<TRoot>, Stream<TOut>> buildStream() {
+	public <TMap> SuggestionBuilder<TRoot, TMap, TSender> flatMap(Function<TOut, TMap> function) {
+		this.transformations.add((stream, context) -> stream.flatMap(function));
+		return (SuggestionBuilder<TRoot, TMap, TSender>) this;
+	}
+
+	public Function<Stream<TRoot>, Stream<TOut>> buildStream(CommandContext<TSender> context) {
 		return stream -> {
-			for (Function<Stream, Stream> transformation : this.transformations) {
-				stream = transformation.apply(stream);
+			for (BiFunction<Stream, CommandContext<TSender>, Stream> transformation : this.transformations) {
+				stream = transformation.apply(stream, context);
 			}
 			return (Stream<TOut>) stream;
 		};
 	}
 
-	public Function<Iterable<TRoot>, Stream<TOut>> buildIterable() {
+	public Function<Iterable<TRoot>, Stream<TOut>> buildIterable(CommandContext<TSender> context) {
 		return (iterable) -> {
 			Stream stream = StreamSupport.stream(iterable.spliterator(), false);
 			for (var transformation : transformations) {
-				stream = transformation.apply(stream);
+				stream = transformation.apply(stream, context);
 			}
 			return (Stream<TOut>) stream;
 		};
 	}
 
-	public SuggestionProvider<CommandSender> buildSuggest() {
-		final Function<Stream<TRoot>, Stream<TOut>> transformation = this.buildStream();
+	public SuggestionProvider<TSender> buildSuggest() {
 		return (context, builder) -> {
-			transformation.apply(this.supplier.get())
-				.map(Objects::toString)
-				.forEach(builder::suggest);
-			return builder.buildFuture();
-		};
-	}
-
-	public SuggestionProvider<CommandSender> buildSuggest(String fieldName) {
-		final Function<Stream<TRoot>, Stream<String>> transformation = this.map(Objects::toString).buildStream();
-
-		return (context, builder) -> {
-			String input = ArgumentBuilder.getSafeStringArgument(context, fieldName, "");
-
-			transformation.apply(this.supplier.get())
-				.map(Objects::toString)
-				.filter(name -> {
-					if (name.toLowerCase().contains(input)) {
-						return true;
-					}
-					return false;
-				})
-				.forEach(builder::suggest);
+			String input = builder.getRemaining().toLowerCase();
+			this.buildStream(context)
+					.apply(this.supplier.get())
+					.map(Objects::toString)
+					.filter(Objects::nonNull)
+					.filter(name -> {
+						if (input == null || name.toLowerCase().startsWith(input)) {
+							return true;
+						}
+						return false;
+					})
+					.forEach(builder::suggest);
 			return builder.buildFuture();
 		};
 	}

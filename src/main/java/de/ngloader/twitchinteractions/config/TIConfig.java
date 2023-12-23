@@ -25,6 +25,12 @@ public class TIConfig {
 	@SimpleKey
 	private RandomTeleportConfig randomTeleport;
 
+	@SimpleKey
+	private BedExplosionConfig bedExplosion;
+
+	@SimpleKey
+	private RandomParticleWalkConfig randomParticleWalk;
+
 	public boolean isVerbose() {
 		return this.verbose;
 	}
@@ -43,5 +49,13 @@ public class TIConfig {
 
 	public RandomTeleportConfig getRandomTeleportConfig() {
 		return this.randomTeleport;
+	}
+
+	public BedExplosionConfig getBedExplosionConfig() {
+		return this.bedExplosion;
+	}
+
+	public RandomParticleWalkConfig getRandomParticleWalkConfig() {
+		return this.randomParticleWalk;
 	}
 }

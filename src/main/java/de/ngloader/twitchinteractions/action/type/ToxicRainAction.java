@@ -13,14 +13,14 @@ import org.bukkit.scheduler.BukkitTask;
 import de.ngloader.twitchinteractions.TIPlugin;
 import de.ngloader.twitchinteractions.action.Action;
 
-public class ActionToxicRain extends Action implements Runnable {
+public class ToxicRainAction extends Action implements Runnable {
 
 	private static final PotionEffect POISION_POTION = new PotionEffect(PotionEffectType.POISON, 20 * 4, 0);
 
 	private BukkitTask currentTask;
 
-	public ActionToxicRain(TIPlugin plugin) {
-		super(plugin);
+	public ToxicRainAction(TIPlugin plugin) {
+		super(plugin, "ToxicRain", "twitchinteractions.command.action.toxicrain");
 	}
 
 	@Override

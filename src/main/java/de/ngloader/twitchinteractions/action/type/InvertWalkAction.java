@@ -8,10 +8,10 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import de.ngloader.twitchinteractions.TIPlugin;
 import de.ngloader.twitchinteractions.action.Action;
 
-public class ActionInvertWalk extends Action {
+public class InvertWalkAction extends Action {
 
-	public ActionInvertWalk(TIPlugin plugin) {
-		super(plugin);
+	public InvertWalkAction(TIPlugin plugin) {
+		super(plugin, "InvertWalk", "twitchinteractions.command.action.invertwalk");
 	}
 
 	@Override

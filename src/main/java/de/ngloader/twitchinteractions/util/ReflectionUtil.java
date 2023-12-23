@@ -175,7 +175,7 @@ public class ReflectionUtil {
 
 	public static Constructor<?> getConstructor(Class<?> clazz, Class<?>... parameterTypes) {
 		try {
-			return clazz.getConstructor(parameterTypes);
+			return clazz.getDeclaredConstructor(parameterTypes);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

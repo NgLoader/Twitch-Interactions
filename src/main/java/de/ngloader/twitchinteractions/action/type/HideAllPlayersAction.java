@@ -9,10 +9,10 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import de.ngloader.twitchinteractions.TIPlugin;
 import de.ngloader.twitchinteractions.action.Action;
 
-public class ActionHideAllPlayers extends Action {
+public class HideAllPlayersAction extends Action {
 
-	public ActionHideAllPlayers(TIPlugin plugin) {
-		super(plugin);
+	public HideAllPlayersAction(TIPlugin plugin) {
+		super(plugin, "HideAllPlayers", "twitchinteractions.command.action.hideallplayers");
 	}
 
 	@Override

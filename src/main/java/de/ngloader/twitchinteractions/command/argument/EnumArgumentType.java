@@ -1,8 +1,9 @@
 package de.ngloader.twitchinteractions.command.argument;
 
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Stream;
+import java.util.function.Function;
 
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
@@ -19,6 +20,10 @@ public class EnumArgumentType<T extends Enum<?>> implements ArgumentType<T> {
 		return new EnumArgumentType<>(enumClass);
 	}
 
+	public static <T extends Enum<?>> EnumArgumentType<T> enumType(Class<T> enumClass, Function<T, String> mapper) {
+		return new EnumArgumentType<>(enumClass, mapper);
+	}
+
 	@SuppressWarnings("unchecked")
 	public static <T extends Enum<?>> T getEnum(CommandContext<?> context, String name) {
 		return (T) context.getArgument(name, Enum.class);
@@ -26,18 +31,35 @@ public class EnumArgumentType<T extends Enum<?>> implements ArgumentType<T> {
 
 	private final Class<T> enumClass;
 
+	private final String[] suggestions;
+	private final Map<String, T> mapping = new HashMap<>();
+
 	EnumArgumentType(Class<T> enumClass) {
+		this(enumClass, entry -> entry.name());
+	}
+
+	EnumArgumentType(Class<T> enumClass, Function<T, String> mapper) {
 		this.enumClass = enumClass;
+
+		T[] entries = this.enumClass.getEnumConstants();
+		this.suggestions = new String[entries.length];
+
+		for (int i = 0; i < entries.length; i++) {
+			T entry = entries[i];
+			String mappedName = mapper.apply(entry);
+			this.suggestions[i] = mappedName;
+			this.mapping.put(mappedName.toLowerCase(), entry);
+		}
 	}
 
 	@Override
 	public T parse(StringReader reader) throws CommandSyntaxException {
 		int start = reader.getCursor();
-		String input = reader.readString();
-		for (T value : this.enumClass.getEnumConstants()) {
-			if (value.name().equalsIgnoreCase(input)) {
-				return value;
-			}
+		String input = reader.readString().toLowerCase();
+
+		T entry = this.mapping.get(input);
+		if (entry != null) {
+			return entry;
 		}
 
 		reader.setCursor(start);
@@ -46,7 +68,6 @@ public class EnumArgumentType<T extends Enum<?>> implements ArgumentType<T> {
 
 	@Override
 	public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-		Stream<String> values = Arrays.stream(this.enumClass.getEnumConstants()).map(value -> value.name());
-		return SharedSuggestionProvider.suggest(values, builder);
+		return SharedSuggestionProvider.suggest(this.suggestions, builder);
 	}
 }

@@ -18,13 +18,14 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import de.ngloader.twitchinteractions.TIPermission;
 import de.ngloader.twitchinteractions.TIPlugin;
+import de.ngloader.twitchinteractions.command.TICommand;
 import de.ngloader.twitchinteractions.command.argument.ArgumentBuilder;
 import de.ngloader.twitchinteractions.command.argument.ArgumentTypes;
 import de.ngloader.twitchinteractions.config.RandomTeleportConfig;
 import de.ngloader.twitchinteractions.translation.Message;
 import de.ngloader.twitchinteractions.translation.Translation;
 
-public class RandomTeleportCommand {
+public class RandomTeleportCommand implements TICommand {
 
 	private final Translation translation;
 	private final RandomTeleportConfig config;
@@ -36,7 +37,8 @@ public class RandomTeleportCommand {
 		this.config = plugin.getTIConfig().getRandomTeleportConfig();
 	}
 
-	public LiteralArgumentBuilder<CommandSender> create() {
+	@Override
+	public LiteralArgumentBuilder<CommandSender> createArgumentBuilder() {
 		return literal("randomtp")
 				.requires(TIPermission.COMMAND_RANDOM_TELEPORT::hasPermission)
 				.then(argument("radius", ArgumentTypes.doubleArg(1))

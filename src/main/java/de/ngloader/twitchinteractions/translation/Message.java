@@ -13,7 +13,7 @@ public enum Message {
 	ACTION_REMOVED_PLAYERS("actionRemovedPlayers", "Action §e{0} §ghas removed §e{1} §gplayers§8."),
 	ACTION_ALL_REMOVED_PLAYERS("actionAllRemovedPlayers", "Removed §e{0} §gplayers from all actions§8."),
 	COMMAND_DROPPED_INVENTORIES("commandDroppedInventories", "Dropped all items from §e{0} §gplayer inventories§8."),
-	COMMAND_FAKE_BAN("commandFakeBan", "Kicked §e{0} %gplayers for reaseon §e{1}§8."),
+	COMMAND_KICK("commandKick", "Kicked §e{0} %gplayers for reaseon §e{1}§8."),
 	COMMAND_DEMO("commandDemo", "Send demo screen to §e{0} §gplayers§8."),
 	COMMAND_RANDOM_TELEPORT("commandRandomTeleport", "Teleported §e{0} §gplayers§8."),
 	COMMAND_MLG("commandMLG", "§e{0} §gplayers trying now a MLG§8.");

@@ -3,7 +3,6 @@ package de.ngloader.twitchinteractions.command.argument;
 import org.bukkit.command.CommandSender;
 
 import com.mojang.brigadier.arguments.ArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -21,14 +20,12 @@ public class ArgumentBuilder {
 		return RequiredArgumentBuilder.<CommandSender, T>argument(name, type);
 	}
 
-	public static String getSafeStringArgument(CommandContext<CommandSender> context, String fieldName, String defaultValue) {
-		String input;
+	public static String getSafeStringArgument(CommandContext<?> context, String fieldName, String defaultValue) {
 		try {
-			input = StringArgumentType.getString(context, fieldName);
+			return ArgumentTypes.getString(context, fieldName);
 		} catch (IllegalArgumentException e) {
 			// Ignore missing argument exception and return default value
 			return defaultValue;
 		}
-		return input;
 	}
 }

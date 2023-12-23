@@ -14,24 +14,26 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import de.ngloader.twitchinteractions.TIPermission;
 import de.ngloader.twitchinteractions.TIPlugin;
+import de.ngloader.twitchinteractions.command.TICommand;
 import de.ngloader.twitchinteractions.command.argument.ArgumentBuilder;
 import de.ngloader.twitchinteractions.command.argument.ArgumentTypes;
 import de.ngloader.twitchinteractions.config.FakeKickConfig;
 import de.ngloader.twitchinteractions.translation.Message;
 import de.ngloader.twitchinteractions.translation.Translation;
 
-public class FakeKickCommand {
+public class KickCommand implements TICommand {
 
 	private final Translation translation;
 	private final FakeKickConfig config;
 
-	public FakeKickCommand(TIPlugin plugin) {
+	public KickCommand(TIPlugin plugin) {
 		this.translation = plugin.getTranslation();
 		this.config = plugin.getTIConfig().getFakeKickConfig();
 	}
 
-	public LiteralArgumentBuilder<CommandSender> create() {
-		return literal("fakekick")
+	@Override
+	public LiteralArgumentBuilder<CommandSender> createArgumentBuilder() {
+		return literal("kick")
 				.then(literal("crash")
 						.requires(TIPermission.COMMAND_FAKE_CRASH::hasPermission)
 						.then(argument("players", ArgumentTypes.players())
@@ -50,7 +52,7 @@ public class FakeKickCommand {
 		List<Player> players = ArgumentTypes.getPlayers(context, "players");
 		players.forEach(player -> player.kickPlayer(config.getCrashMessage()));
 
-		this.translation.send(context, Message.COMMAND_FAKE_BAN, players.size(), "crash");
+		this.translation.send(context, Message.COMMAND_KICK, players.size(), "crash");
 		return ArgumentBuilder.RESULT_OK;
 	}
 
@@ -58,7 +60,7 @@ public class FakeKickCommand {
 		List<Player> players = ArgumentTypes.getPlayers(context, "players");
 		players.forEach(player -> player.kickPlayer(config.getServerStopMessage()));
 
-		this.translation.send(context, Message.COMMAND_FAKE_BAN, players.size(), "closed");
+		this.translation.send(context, Message.COMMAND_KICK, players.size(), "closed");
 		return ArgumentBuilder.RESULT_OK;
 	}
 
@@ -66,7 +68,7 @@ public class FakeKickCommand {
 		List<Player> players = ArgumentTypes.getPlayers(context, "players");
 		players.forEach(player -> player.kickPlayer(config.getBanMessage()));
 
-		this.translation.send(context, Message.COMMAND_FAKE_BAN, players.size(), "ban");
+		this.translation.send(context, Message.COMMAND_KICK, players.size(), "ban");
 		return ArgumentBuilder.RESULT_OK;
 	}
 }

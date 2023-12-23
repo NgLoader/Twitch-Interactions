@@ -18,20 +18,23 @@ import de.ngloader.twitchinteractions.TIPermission;
 import de.ngloader.twitchinteractions.TIPlugin;
 import de.ngloader.twitchinteractions.action.Action;
 import de.ngloader.twitchinteractions.action.ActionManager;
-import de.ngloader.twitchinteractions.action.ActionType;
+import de.ngloader.twitchinteractions.command.TICommand;
 import de.ngloader.twitchinteractions.command.argument.ArgumentBuilder;
 import de.ngloader.twitchinteractions.command.argument.ArgumentTypes;
+import de.ngloader.twitchinteractions.command.suggestion.CommandSuggestion;
 import de.ngloader.twitchinteractions.translation.Message;
 import de.ngloader.twitchinteractions.translation.Translation;
 
-public class ActionCommand {
+public class ActionCommand implements TICommand {
 
 	private final Translation translation;
 	private final ActionManager actionManager;
+	private final CommandSuggestion suggestion;
 
 	public ActionCommand(TIPlugin plugin) {
 		this.translation = plugin.getTranslation();
 		this.actionManager = plugin.getActionManager();
+		this.suggestion = plugin.getCommandSuggestion();
 	}
 
 	/*
@@ -41,14 +44,19 @@ public class ActionCommand {
 	 * action remove <player>
 	 */
 
-	public LiteralArgumentBuilder<CommandSender> create() {
+	@Override
+	public LiteralArgumentBuilder<CommandSender> createArgumentBuilder() {
 		return literal("action")
 				.requires(TIPermission.COMMAND_ACTION::hasPermission)
 				.then(literal("remove")
 						.executes(this::handleRemoveAll)
 						.then(argument("players", ArgumentTypes.players())
 								.executes(this::handleRemoveAllPlayers)))
-				.then(argument("actionType", ArgumentTypes.enumType(ActionType.class))
+				.then(argument("actionType", ArgumentTypes.string())
+						.suggests(this.suggestion.actions()
+								.filter((action, context) -> context.getSource().hasPermission(action.getPermission()))
+								.map(action -> action.getName())
+								.buildSuggest())
 						.then(literal("enable")
 								.executes(this::handleEnable))
 						.then(literal("disable")
@@ -80,29 +88,31 @@ public class ActionCommand {
 	}
 
 	public int handleEnable(CommandContext<CommandSender> context) {
-		ActionType actionType = ArgumentTypes.getEnum(context, "actionType");
-		if (this.actionManager.isRegistered(actionType)) {
-			if (this.actionManager.enableAction(actionType)) {
-				this.translation.send(context, Message.ACTION_ENABLED, actionType.name());
+		String actionName = ArgumentTypes.getString(context, "actionType");
+		Action action = this.actionManager.getAction(actionName);
+		if (action != null) {
+			if (action.enable()) {
+				this.translation.send(context, Message.ACTION_ENABLED, action.getName());
 			} else {
-				this.translation.send(context, Message.ACTION_ENABLED_FAILED, actionType.name());
+				this.translation.send(context, Message.ACTION_ENABLED_FAILED, action.getName());
 			}
 		} else {
-			this.translation.send(context.getSource(), Message.ACTION_NOT_REGISTERED, actionType.name());
+			this.translation.send(context.getSource(), Message.ACTION_NOT_REGISTERED, actionName);
 		}
 		return ArgumentBuilder.RESULT_OK;
 	}
 
 	public int handleDisable(CommandContext<CommandSender> context) {
-		ActionType actionType = ArgumentTypes.getEnum(context, "actionType");
-		if (this.actionManager.isRegistered(actionType)) {
-			if (this.actionManager.disableAction(actionType)) {
-				this.translation.send(context, Message.ACTION_DISABLED, actionType.name());
+		String actionName = ArgumentTypes.getString(context, "actionType");
+		Action action = this.actionManager.getAction(actionName);
+		if (action != null) {
+			if (action.disable()) {
+				this.translation.send(context, Message.ACTION_DISABLED, action.getName());
 			} else {
-				this.translation.send(context, Message.ACTION_DISABLED_FAILED, actionType.name());
+				this.translation.send(context, Message.ACTION_DISABLED_FAILED, action.getName());
 			}
 		} else {
-			this.translation.send(context.getSource(), Message.ACTION_NOT_REGISTERED, actionType.name());
+			this.translation.send(context.getSource(), Message.ACTION_NOT_REGISTERED, actionName);
 		}
 		return ArgumentBuilder.RESULT_OK;
 	}
@@ -140,8 +150,7 @@ public class ActionCommand {
 	}
 
 	public void addActionPlayers(CommandContext<CommandSender> context, long time, List<Player> players) {
-		ActionType actionType = ArgumentTypes.getEnum(context, "actionType");
-		Action action = this.getAction(context, actionType);
+		Action action = this.getAction(context);
 		if (action == null) {
 			return;
 		}
@@ -152,12 +161,11 @@ public class ActionCommand {
 			count++;
 		}
 
-		this.translation.send(context, Message.ACTION_ADDED_PLAYERS, actionType.name(), count);
+		this.translation.send(context, Message.ACTION_ADDED_PLAYERS, action.getName(), count);
 	}
 
 	public void removeActionPlayers(CommandContext<CommandSender> context, List<Player> players) {
-		ActionType actionType = ArgumentTypes.getEnum(context, "actionType");
-		Action action = this.getAction(context, actionType);
+		Action action = this.getAction(context);
 		if (action == null) {
 			return;
 		}
@@ -172,29 +180,25 @@ public class ActionCommand {
 			count++;
 		}
 
-		this.translation.send(context, Message.ACTION_REMOVED_PLAYERS, actionType.name(), count);
+		this.translation.send(context, Message.ACTION_REMOVED_PLAYERS, action.getName(), count);
 	}
 
 	public void removePlayersFromAllAction(CommandContext<CommandSender> context, List<Player> players) {
-		for (ActionType actionType : ActionType.values()) {
-			Action action = this.actionManager.getAction(actionType);
-			if (action == null) {
-				continue;
-			}
-
+		for (Action action : this.actionManager.getActionList()) {
 			players.forEach(action::removePlayer);
 		}
 
 		this.translation.send(context, Message.ACTION_ALL_REMOVED_PLAYERS, players.size());
 	}
 
-	public Action getAction(CommandContext<CommandSender> context, ActionType actionType) {
-		Action action = this.actionManager.getAction(actionType);
+	public Action getAction(CommandContext<CommandSender> context) {
+		String actionName = ArgumentTypes.getString(context, "actionType");
+		Action action = this.actionManager.getAction(actionName);
 		if (action == null) {
-			this.translation.send(context.getSource(), Message.ACTION_NOT_REGISTERED, actionType.name());
+			this.translation.send(context.getSource(), Message.ACTION_NOT_REGISTERED, actionName);
 			return null;
 		} else if (!action.isEnabled()) {
-			this.translation.send(context.getSource(), Message.ACTION_IS_DISABLED, actionType.name());
+			this.translation.send(context.getSource(), Message.ACTION_IS_DISABLED, action.getName());
 			return null;
 		}
 		return action;

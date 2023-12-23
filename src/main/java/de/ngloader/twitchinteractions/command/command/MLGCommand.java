@@ -13,10 +13,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -37,15 +37,15 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import de.ngloader.twitchinteractions.TIPermission;
 import de.ngloader.twitchinteractions.TIPlugin;
+import de.ngloader.twitchinteractions.command.TICommand;
 import de.ngloader.twitchinteractions.command.argument.ArgumentBuilder;
 import de.ngloader.twitchinteractions.command.argument.ArgumentTypes;
 import de.ngloader.twitchinteractions.translation.Message;
 import de.ngloader.twitchinteractions.translation.Translation;
 
-public class MLGCommand implements Listener {
+public class MLGCommand implements TICommand {
 
 	private final TIPlugin plugin;
-
 	private final Translation translation;
 
 	private final List<Player> activePlayers = new ArrayList<>();
@@ -57,11 +57,10 @@ public class MLGCommand implements Listener {
 	public MLGCommand(TIPlugin plugin) {
 		this.plugin = plugin;
 		this.translation = plugin.getTranslation();
-
-		Bukkit.getPluginManager().registerEvents(this, this.plugin);
 	}
 
-	public LiteralArgumentBuilder<CommandSender> create() {
+	@Override
+	public LiteralArgumentBuilder<CommandSender> createArgumentBuilder() {
 		return literal("mlg")
 				.requires(TIPermission.COMMAND_MLG::hasPermission)
 				.executes(this::handle)
@@ -77,6 +76,11 @@ public class MLGCommand implements Listener {
 	public int handlePlayers(CommandContext<CommandSender> context) throws CommandSyntaxException {
 		this.addPlayers(context, ArgumentTypes.getPlayers(context, "players"));
 		return ArgumentBuilder.RESULT_OK;
+	}
+
+	@Override
+	public void onDisable() {
+		new ArrayList<>(this.activePlayers).forEach(this::removePlayer);
 	}
 
 	public void addPlayers(CommandContext<CommandSender> context, List<Player> players) {
@@ -127,7 +131,8 @@ public class MLGCommand implements Listener {
 				this.removePlayer(player);
 			} else if (player.getVelocity().getY() < 1) {
 				Location location = player.getLocation().subtract(0, 0.6, 0);
-				if (!location.getBlock().isPassable()) {
+				Block block = location.getBlock();
+				if (!block.isPassable() || block.isLiquid()) {
 					this.removePlayer(player);
 				}
 			}
@@ -147,10 +152,18 @@ public class MLGCommand implements Listener {
 			event.setCancelled(true);
 
 			Location clickLocation = event.getBlockClicked().getLocation();
-			clickLocation.add(0, 1, 0);
-			clickLocation.getBlock().setType(Material.WATER);
+
+			Block placeBlock = clickLocation.getBlock().getRelative(event.getBlockFace());
+			if (placeBlock.getType() != Material.AIR) {
+				this.removePlayer(player);
+				return;
+			}
+
+			placeBlock.setType(Material.WATER);
 			Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-				clickLocation.getBlock().setType(Material.AIR);
+				if (placeBlock.getType() == Material.WATER) {
+					placeBlock.setType(Material.AIR);
+				}
 			}, 5);
 
 			this.removePlayer(player);
