@@ -5,10 +5,7 @@ import java.util.logging.Logger;
 
 public class TILogger {
 
-	private static Logger logger = Logger.getLogger("bukkit.twitchinteractions");
-
-	private static final String LOG_PREFIX = "[TwitchInteractions] ";
-	private static final String LOG_DEBUG_PREFIX = "[TwitchInteractions/Debug] ";
+	public static Logger logger = Logger.getLogger("TwitchInteractions");
 
 	private static boolean verbose = false;
 
@@ -18,19 +15,19 @@ public class TILogger {
 
 	public static void debug(String message) {
 		if (TILogger.verbose) {
-			TILogger.logger.log(Level.FINE, LOG_DEBUG_PREFIX + message);
+			TILogger.logger.log(Level.FINE, "[Debug] " + message);
 		}
 	}
 
 	public static void info(String message) {
-		TILogger.logger.log(Level.INFO, LOG_PREFIX + message);
+		TILogger.logger.log(Level.INFO, message);
 	}
 
 	public static void warn(String message) {
-		TILogger.logger.log(Level.WARNING, LOG_PREFIX + message);
+		TILogger.logger.log(Level.WARNING, message);
 	}
 
 	public static void error(String message, Throwable throwable) {
-		TILogger.logger.log(Level.SEVERE, LOG_PREFIX + message, throwable);
+		TILogger.logger.log(Level.SEVERE, message, throwable);
 	}
 }

@@ -25,6 +25,8 @@ public class TIPlugin extends JavaPlugin {
 
 	@Override
 	public void onLoad() {
+		TILogger.logger = this.getLogger();
+
 		this.config = new SimpleConfig<>(this.getDataFolder().toPath(), TIConfig.class);
 	}
 

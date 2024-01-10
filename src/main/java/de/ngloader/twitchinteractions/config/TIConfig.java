@@ -40,6 +40,9 @@ public class TIConfig {
 	@SimpleKey
 	private RandomPotionConfig randomPotion;
 
+	@SimpleKey
+	private DuplicateEntityOnKillConfig duplicateEntityOnKill;
+
 	public boolean isVerbose() {
 		return this.verbose;
 	}
@@ -78,5 +81,9 @@ public class TIConfig {
 
 	public RandomPotionConfig getRandomPotion() {
 		return this.randomPotion;
+	}
+
+	public DuplicateEntityOnKillConfig getDuplicateEntityOnKill() {
+		return this.duplicateEntityOnKill;
 	}
 }
